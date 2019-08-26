@@ -32,10 +32,9 @@ func AsyncService() chan string{
 }
 
 
-func TestAsyncService(t *testing.T){
+func BenchmarkAsyncService(t *testing.B){
 	rech := AsyncService()
 	otherTask()
 
 	fmt.Println(<-rech)
-	time.Sleep(time.Second*1)
 }
