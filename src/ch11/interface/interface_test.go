@@ -28,9 +28,9 @@ import (
 //2. 所以接口定义可以包含在接口使用者包内
 
 
-type Code string;
+type Code string
 
-type Progarmmer interface {
+type Programmer interface {
 	WriteHelloWorld() Code
 }
 
@@ -52,13 +52,13 @@ func (p *JavaProgrammer) WriteHelloWorld() Code{
 }
 
 
-func WriteFirstProgram(p Progarmmer){
+func WriteFirstProgram(p Programmer){
 	fmt.Printf("%T %v\n",p,p.WriteHelloWorld())
 }
 
 func TestPolymorphism(t *testing.T)  {
-	goProg := new(GoProgrammer)
-	javaProg := new(JavaProgrammer)
-	WriteFirstProgram(goProg)
-	WriteFirstProgram(javaProg)
+	goPro := new(GoProgrammer)
+	javaPro := new(JavaProgrammer)
+	WriteFirstProgram(goPro)
+	WriteFirstProgram(javaPro)
 }
