@@ -6,15 +6,13 @@ import (
 )
 
 type Pet struct {
-
 }
 
-func (p *Pet) Speak(){
+func (p *Pet) Speak() {
 	fmt.Print("...")
 }
 
-
-func (p *Pet) SpeakTo(host string){
+func (p *Pet) SpeakTo(host string) {
 	p.Speak()
 	fmt.Println(" ", host)
 }
@@ -33,7 +31,7 @@ type Dog struct {
 //	fmt.Println("", host)
 //}
 
-func TestDog(t *testing.T){
+func TestDog(t *testing.T) {
 	dog := new(Dog)
 	dog.SpeakTo("666666")
 }

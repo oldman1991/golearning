@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"testing"
-
 )
-
 
 var LessThanTwoError = errors.New("n should be not less than 2")
 var LargerThenHundredError = errors.New("n should be not larger than 100")
@@ -27,7 +25,6 @@ func GetFibonacci(n int) ([]int, error) {
 	return fibList, nil
 }
 
-
 //func GetFibonacci(n int) ([]int,error){
 //	if n<0 || n>100 {
 //		return nil, errors.New("n should be in [2,100]")
@@ -40,49 +37,47 @@ func GetFibonacci(n int) ([]int, error) {
 //	return fibList, nil
 //}
 
-//嵌套错误处理，避免这种写法
-func GetFibonacci1(str string){
+// 嵌套错误处理，避免这种写法
+func GetFibonacci1(str string) {
 	var (
-		i int
-		err error
+		i    int
+		err  error
 		list []int
 	)
 
-	if i,err = strconv.Atoi(str);err ==nil{
-		if list, err=GetFibonacci(i); err==nil{
+	if i, err = strconv.Atoi(str); err == nil {
+		if list, err = GetFibonacci(i); err == nil {
 			fmt.Println(list)
-		}else {
+		} else {
 			fmt.Println("Error", err)
 		}
-	}else {
+	} else {
 		fmt.Println("Error", err)
 	}
 }
 
-//使用这一种错误处理机制
-func GetFibonacci2(str string){
+// 使用这一种错误处理机制
+func GetFibonacci2(str string) {
 	var (
-		i int
-		err error
+		i    int
+		err  error
 		list []int
 	)
-	if i,err = strconv.Atoi(str);err!=nil{
+	if i, err = strconv.Atoi(str); err != nil {
 		fmt.Println("Error", err)
 		return
 	}
-	if list, err=GetFibonacci(i);err != nil {
+	if list, err = GetFibonacci(i); err != nil {
 		fmt.Println("Error", err)
 		return
 	}
 	fmt.Println(list)
 }
 
-
-
-func TestGetFibonacci(t *testing.T){
-	if v, err:=GetFibonacci(1000);err!= nil {
+func TestGetFibonacci(t *testing.T) {
+	if v, err := GetFibonacci(1000); err != nil {
 		t.Error(err)
-	}else {
+	} else {
 		t.Log(v)
 	}
 }

@@ -5,6 +5,6 @@ import (
 	"testing"
 )
 
-func TestPackage(t *testing.T){
+func TestPackage(t *testing.T) {
 	series.GetFibonacciSeries5(2)
 }

@@ -22,11 +22,11 @@ var l1 = "刚吃。"
 var l2 = "您这，嘛去？"
 var l4 = "有空家里坐坐啊。"
 
-var liWriteLock sync.Mutex //李大爷的写锁
+var liWriteLock sync.Mutex    //李大爷的写锁
 var zhangWriteLock sync.Mutex //张大爷的写锁
 
 type RequestResponse struct {
-	Serial uint32 //序号
+	Serial  uint32 //序号
 	Payload string //内容
 }
 
@@ -37,12 +37,12 @@ type RequestResponse struct {
 serial 4字节
 Payload 变长
 */
-func writeTo(r *RequestResponse, conn *net.TCPConn, lock *sync.Mutex){
+func writeTo(r *RequestResponse, conn *net.TCPConn, lock *sync.Mutex) {
 	lock.Lock()
 	defer lock.Unlock()
 	payloadBytes := []byte(r.Payload)
-	serialBytes := make([]byte,4)
-	binary.BigEndian.PutUint32(serialBytes,r.Serial)
+	serialBytes := make([]byte, 4)
+	binary.BigEndian.PutUint32(serialBytes, r.Serial)
 
 	length := uint32(len(payloadBytes) + len(serialBytes))
 	lengthByte := make([]byte, 4)
@@ -52,107 +52,103 @@ func writeTo(r *RequestResponse, conn *net.TCPConn, lock *sync.Mutex){
 	conn.Write(serialBytes)
 	conn.Write(payloadBytes)
 	//fmt.Println("发送：" + r.Payload)
- }
+}
 
-
- /*
+/*
  接收消息，反序列化成RequestResponse
- */
- func readFrom(conn *net.TCPConn)(*RequestResponse, error){
- 	ret := &RequestResponse{}
+*/
+func readFrom(conn *net.TCPConn) (*RequestResponse, error) {
+	ret := &RequestResponse{}
 
- 	buff :=make([]byte,4)
+	buff := make([]byte, 4)
 
- 	if _, err:=io.ReadFull(conn,buff);err!=nil{
- 		return nil, fmt.Errorf("读长度故障：%s", err.Error())
+	if _, err := io.ReadFull(conn, buff); err != nil {
+		return nil, fmt.Errorf("读长度故障：%s", err.Error())
 	}
 
- 	length := binary.BigEndian.Uint32(buff)
+	length := binary.BigEndian.Uint32(buff)
 
- 	if _,err:=io.ReadFull(conn, buff);err!=nil{
- 		return nil, fmt.Errorf("读Serial故障：%s", err.Error())
+	if _, err := io.ReadFull(conn, buff); err != nil {
+		return nil, fmt.Errorf("读Serial故障：%s", err.Error())
 	}
 	ret.Serial = binary.BigEndian.Uint32(buff)
-	payloadBytes:=make([]byte, length-4)
+	payloadBytes := make([]byte, length-4)
 
-	if _,err:=io.ReadFull(conn, payloadBytes);err != nil {
-		 return nil, fmt.Errorf("读Payload故障：%s", err.Error())
-	 }
+	if _, err := io.ReadFull(conn, payloadBytes); err != nil {
+		return nil, fmt.Errorf("读Payload故障：%s", err.Error())
+	}
 	ret.Payload = string(payloadBytes)
 	return ret, nil
 
- }
+}
 
- /*
+/*
  张大爷的耳朵
- */
+*/
 
- func zhangDaYeListen(conn *net.TCPConn){
- 	for count < total{
- 		r, err:=readFrom(conn)
- 		if err!=nil{
- 			fmt.Println(err.Error())
+func zhangDaYeListen(conn *net.TCPConn) {
+	for count < total {
+		r, err := readFrom(conn)
+		if err != nil {
+			fmt.Println(err.Error())
 		}
 		switch r.Payload {
 		case l2:
-			go writeTo(&RequestResponse{r.Serial, z3},conn,&zhangWriteLock)
+			go writeTo(&RequestResponse{r.Serial, z3}, conn, &zhangWriteLock)
 
 		case l4:
 			go writeTo(&RequestResponse{r.Serial, z5}, conn, &zhangWriteLock)
 		case l1:
 			//如果收到刚吃，不用回复
 		default:
-			fmt.Println("张大爷听不懂："+r.Payload)
+			fmt.Println("张大爷听不懂：" + r.Payload)
 		}
 	}
- }
+}
 
- /*
+/*
  张大爷的嘴
- */
+*/
 
- func zhangDaYeSay(conn *net.TCPConn){
- 	nextSerial := uint32(0)
-	 for i:=uint32(0); i<total; i++ {
-		 writeTo(&RequestResponse{nextSerial, z0}, conn, &zhangWriteLock)
-		 nextSerial ++
-	 }
- }
-
-
+func zhangDaYeSay(conn *net.TCPConn) {
+	nextSerial := uint32(0)
+	for i := uint32(0); i < total; i++ {
+		writeTo(&RequestResponse{nextSerial, z0}, conn, &zhangWriteLock)
+		nextSerial++
+	}
+}
 
 /*
 李大爷的耳朵
 */
 
-func liDaYeListen(conn *net.TCPConn,wg *sync.WaitGroup){
+func liDaYeListen(conn *net.TCPConn, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for count < total{
-		r,err:=readFrom(conn)
-		if err!=nil{
+	for count < total {
+		r, err := readFrom(conn)
+		if err != nil {
 			fmt.Println(err.Error())
 			break
 		}
-		if r.Payload==z0{
+		if r.Payload == z0 {
 			writeTo(&RequestResponse{r.Serial, l1}, conn, &liWriteLock)
-		}else if r.Payload==z3{
+		} else if r.Payload == z3 {
 
-		}else if r.Payload==z5{
+		} else if r.Payload == z5 {
 			count++
-		}else {
-				fmt.Println("李大爷听不懂", r.Payload)
-				break
+		} else {
+			fmt.Println("李大爷听不懂", r.Payload)
+			break
 		}
 	}
 }
 
-
 /*
 李大爷的嘴
 */
-func liDaYeSay(conn *net.TCPConn){
+func liDaYeSay(conn *net.TCPConn) {
 	nextSerial := uint32(0)
-	for i:=uint32(0); i<total; i++ {
+	for i := uint32(0); i < total; i++ {
 		writeTo(&RequestResponse{nextSerial, l2}, conn, &liWriteLock)
 		nextSerial++
 		writeTo(&RequestResponse{nextSerial, l4}, conn, &liWriteLock)
@@ -160,15 +156,14 @@ func liDaYeSay(conn *net.TCPConn){
 	}
 }
 
-
-func startServer(){
-	tcpAddr, _:=net.ResolveTCPAddr("tcp", "127.0.0.1:9999")
-	tcpListenner ,_:=net.ListenTCP("tcp", tcpAddr)
+func startServer() {
+	tcpAddr, _ := net.ResolveTCPAddr("tcp", "127.0.0.1:9999")
+	tcpListenner, _ := net.ListenTCP("tcp", tcpAddr)
 	defer tcpListenner.Close()
 	fmt.Println("张大爷在胡同口等着...")
-	for{
-		conn, err:=tcpListenner.AcceptTCP()
-		if err!=nil{
+	for {
+		conn, err := tcpListenner.AcceptTCP()
+		if err != nil {
 			fmt.Println(err)
 			break
 		}
@@ -178,11 +173,10 @@ func startServer(){
 	}
 }
 
-
-func startClient(){
+func startClient() {
 	var tcpAddr *net.TCPAddr
-	tcpAddr, _=net.ResolveTCPAddr("tcp", "127.0.0.1:9999")
-	conn, _:=net.DialTCP("tcp", nil, tcpAddr)
+	tcpAddr, _ = net.ResolveTCPAddr("tcp", "127.0.0.1:9999")
+	conn, _ := net.DialTCP("tcp", nil, tcpAddr)
 	defer conn.Close()
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -191,11 +185,11 @@ func startClient(){
 	wg.Wait()
 }
 
-func TestServer(t *testing.T){
+func TestServer(t *testing.T) {
 	go startServer()
-	time.Sleep(time.Second*1)
-	t1:=time.Now()
+	time.Sleep(time.Second * 1)
+	t1 := time.Now()
 	startClient()
-	elapsed:=time.Since(t1)
+	elapsed := time.Since(t1)
 	fmt.Println("耗时：", elapsed)
 }

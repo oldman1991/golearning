@@ -10,8 +10,7 @@ import (
 
 type InConv func(op int) int
 
-
-func timeSpent(inner InConv) InConv{
+func timeSpent(inner InConv) InConv {
 	return func(op int) int {
 		start := time.Now()
 		ret := inner(op)
@@ -21,12 +20,11 @@ func timeSpent(inner InConv) InConv{
 }
 
 func slowFun(op int) int {
-	time.Sleep(time.Second*1)
+	time.Sleep(time.Second * 1)
 	return op
 }
 
-
-func TestFn(t *testing.T){
+func TestFn(t *testing.T) {
 	tsSF := timeSpent(slowFun)
 	t.Log(tsSF(10))
 }

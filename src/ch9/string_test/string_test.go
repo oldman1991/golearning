@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestString(t *testing.T){
+func TestString(t *testing.T) {
 	var s string
 	t.Log(s)
 	s = "hello"
@@ -17,21 +17,21 @@ func TestString(t *testing.T){
 	t.Log(len(s))
 }
 
-//字符串分割和join
-func TestStringFn(t *testing.T){
-	s:="A,B,C"
+// 字符串分割和join
+func TestStringFn(t *testing.T) {
+	s := "A,B,C"
 	parts := strings.Split(s, ",")
-	for _, part :=range parts{
+	for _, part := range parts {
 		t.Log(part)
 	}
 	t.Log(strings.Join(parts, "-"))
 }
 
-//字符串和int的转换
-func TestConv(t *testing.T){
-	s:=strconv.Itoa(10)
-	t.Log("str" +s)
-	if i, err:=strconv.Atoi("10");err==nil{
-		t.Log(10+i)
+// 字符串和int的转换
+func TestConv(t *testing.T) {
+	s := strconv.Itoa(10)
+	t.Log("str" + s)
+	if i, err := strconv.Atoi("10"); err == nil {
+		t.Log(10 + i)
 	}
 }

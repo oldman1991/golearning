@@ -1,16 +1,16 @@
 package testdemo
 
 import (
-"encoding/binary"
-"fmt"
-"io"
-"net"
-"sync"
+	"encoding/binary"
+	"fmt"
+	"io"
+	"net"
+	"sync"
 	"testing"
 	"time"
 )
 
-var count = uint32(0)      // 俩大爷已经遇见了多少次
+var count = uint32(0)    // 俩大爷已经遇见了多少次
 var total = uint32(1000) // 总共需要遇见多少次
 
 var z0 = " 吃了没，您吶?"
@@ -30,9 +30,10 @@ type RequestResponse struct {
 
 // 序列化 RequestResponse，并发送
 // 序列化后的结构如下：
-// 	长度	4 字节
-// 	Serial 4 字节
-// 	PayLoad 变长
+//
+//	长度	4 字节
+//	Serial 4 字节
+//	PayLoad 变长
 func writeTo(r *RequestResponse, conn *net.TCPConn, lock *sync.Mutex) {
 	lock.Lock()
 	defer lock.Unlock()

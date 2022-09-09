@@ -11,7 +11,7 @@ import (
 	v,ok := p.(int) //ok=true时转换成功
 */
 
-func DoSomthing(p interface{}){
+func DoSomthing(p interface{}) {
 	//if i,ok :=p.(int);ok{
 	//	fmt.Println("Integer", i)
 	//	return
@@ -22,7 +22,7 @@ func DoSomthing(p interface{}){
 	//}
 	//fmt.Println("Unknow Type")
 
-	switch v:=p.(type) {
+	switch v := p.(type) {
 	case int:
 		fmt.Println("Integer", v)
 	case string:
@@ -30,12 +30,10 @@ func DoSomthing(p interface{}){
 	default:
 		fmt.Println("Unknow Type")
 
-
 	}
 }
 
-
-func TestEmptyInterfaceAssertion(t *testing.T){
+func TestEmptyInterfaceAssertion(t *testing.T) {
 	DoSomthing(10)
 	DoSomthing("aaa")
 }
